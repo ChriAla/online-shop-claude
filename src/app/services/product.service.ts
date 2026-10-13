@@ -1,40 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Product } from '../models/product';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
-
-interface FakeStoreProduct {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  image: string;
-}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'https://fakestoreapi.com/products';
-
-  constructor(private http: HttpClient) {}
-
-  getProducts() {
-    return this.http.get<FakeStoreProduct[]>(this.apiUrl).pipe(
-      map((products) =>
-        products.map((product) => ({
-          id: product.id,
-          name: product.title,
-          price: product.price,
-          image: product.image,
-          description: product.description,
-        })),
-      ),
-    );
-  }
-
-  /*
-  private products: Product[] = [
+  private readonly products: Product[] = [
     {
       id: 1,
       name: 'Laptop',
@@ -61,5 +32,8 @@ export class ProductService {
   getProducts(): Product[] {
     return this.products;
   }
-    */
+
+  getProductById(id: number): Product | undefined {
+    return this.products.find((product) => product.id === id);
+  }
 }

@@ -1,29 +1,40 @@
 <h1>Shopping Cart</h1>
 
 <div class="cart-container">
-  @for (item of cartItems; track item.product.id) {
+  @for (item of cart.items(); track item.product.id) {
     <div class="cart-item">
       <img [src]="item.product.image" [alt]="item.product.name" />
 
       <div class="cart-item-info">
         <h2>{{ item.product.name }}</h2>
 
-        <p>Price: {{ item.product.price * item.quantity | currency: 'EUR' }}</p>
+        <p>
+          {{ item.product.price | currency: 'EUR' }} × {{ item.quantity }} =
+          <strong>{{ item.product.price * item.quantity | currency: 'EUR' }}</strong>
+        </p>
 
         <div class="quantity-controls">
-          <button (click)="decreaseQuantity(item.product)">−</button>
+          <button (click)="cart.decreaseQuantity(item.product)" aria-label="Decrease quantity">
+            −
+          </button>
 
           <span>{{ item.quantity }}</span>
 
-          <button (click)="increaseQuantity(item.product)">+</button>
+          <button (click)="cart.increaseQuantity(item.product)" aria-label="Increase quantity">
+            +
+          </button>
         </div>
 
-        <button class="remove-button" (click)="removeFromCart(item.product)">Remove</button>
+        <button class="remove-button" (click)="cart.removeFromCart(item.product)">Remove</button>
       </div>
     </div>
+  } @empty {
+    <p class="empty">Your cart is empty. <a routerLink="/products">Browse products</a></p>
   }
-</div>
 
-<div class="cart-total">
-  <h2>Total: {{ getTotal() | currency: 'EUR' }}</h2>
+  @if (cart.count() > 0) {
+    <div class="cart-total">
+      <h2>Total: {{ cart.total() | currency: 'EUR' }}</h2>
+    </div>
+  }
 </div>

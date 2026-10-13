@@ -1,15 +1,21 @@
 import { TestBed } from '@angular/core/testing';
-import { Product } from './product';
+import { ProductService } from './product.service';
 
-describe('Product', () => {
-  let service: Product;
+describe('ProductService', () => {
+  let service: ProductService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Product);
+    service = TestBed.inject(ProductService);
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  it('returns the three products', () => {
+    const names = service.getProducts().map((product) => product.name);
+
+    expect(names).toEqual(['Laptop', 'Smartphone', 'Headphones']);
+  });
+
+  it('finds a product by id', () => {
+    expect(service.getProductById(2)?.name).toBe('Smartphone');
+    expect(service.getProductById(99)).toBeUndefined();
   });
 });

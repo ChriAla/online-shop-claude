@@ -1,28 +1,13 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CartService } from '../../services/cart.service';
-import { CartItem } from '../../models/cart-item';
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   selector: 'app-navbar',
   styleUrl: './navbar.css',
   templateUrl: './navbar.html',
 })
 export class Navbar {
-  cartItems: CartItem[] = [];
-
-  constructor(
-    private cartService: CartService,
-    private cdr: ChangeDetectorRef,
-  ) {
-    this.cartService.getCartUpdates().subscribe((cart) => {
-      this.cartItems = cart;
-      this.cdr.markForCheck();
-    });
-  }
-
-  get cartCount(): number {
-    return this.cartService.getCart().reduce((total, item) => total + item.quantity, 0);
-  }
+  protected readonly cart = inject(CartService);
 }

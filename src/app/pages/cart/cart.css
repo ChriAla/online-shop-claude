@@ -63,10 +63,20 @@ h1 {
   cursor: pointer;
 }
 
+.empty {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+}
+
+.empty a {
+  color: #222;
+  font-weight: bold;
+}
+
 .cart-total {
-  max-width: 1000px;
-  margin: 30px auto;
-  padding: 20px;
+  margin-top: 30px;
+  padding: 20px 0;
   text-align: right;
   border-top: 2px solid #ddd;
 }

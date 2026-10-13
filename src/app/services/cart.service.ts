@@ -1,63 +1,65 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
 import { Product } from '../models/product';
 import { CartItem } from '../models/cart-item';
-import { BehaviorSubject } from 'rxjs';
+
+const STORAGE_KEY = 'cart';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private cart: CartItem[] = [];
+  private readonly cartItems = signal<CartItem[]>(loadCart());
 
-  private cartSubject = new BehaviorSubject<CartItem[]>([]);
+  // Components can read the cart but only change it through the methods below.
+  readonly items = this.cartItems.asReadonly();
+  readonly count = computed(() => this.items().reduce((total, item) => total + item.quantity, 0));
+  readonly total = computed(() =>
+    this.items().reduce((total, item) => total + item.product.price * item.quantity, 0),
+  );
+
+  constructor() {
+    // Runs every time the cart changes, so the cart survives a page refresh.
+    effect(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(this.cartItems())));
+  }
 
   addToCart(product: Product): void {
-    const existingItem = this.cart.find((item) => item.product.id === product.id);
-
-    if (existingItem) {
-      existingItem.quantity++;
+    if (this.cartItems().some((item) => item.product.id === product.id)) {
+      this.increaseQuantity(product);
     } else {
-      this.cart.push({
-        product: product,
-        quantity: 1,
-      });
+      this.cartItems.update((items) => [...items, { product, quantity: 1 }]);
     }
-    this.cartSubject.next(this.cart);
   }
 
   increaseQuantity(product: Product): void {
-    const item = this.cart.find((item) => item.product.id === product.id);
-
-    if (item) {
-      item.quantity++;
-      this.cartSubject.next(this.cart);
-    }
-  }
-
-  getCartUpdates() {
-    return this.cartSubject.asObservable();
+    this.changeQuantity(product, 1);
   }
 
   decreaseQuantity(product: Product): void {
-    const item = this.cart.find((item) => item.product.id === product.id);
-
-    if (item) {
-      item.quantity--;
-
-      if (item.quantity === 0) {
-        this.removeFromCart(product);
-      } else {
-        this.cartSubject.next(this.cart);
-      }
-    }
-  }
-
-  getCart(): CartItem[] {
-    return this.cart;
+    this.changeQuantity(product, -1);
   }
 
   removeFromCart(product: Product): void {
-    this.cart = this.cart.filter((item) => item.product.id !== product.id);
-    this.cartSubject.next(this.cart);
+    this.cartItems.update((items) => items.filter((item) => item.product.id !== product.id));
+  }
+
+  // Signals only notice new values, so we build a new array instead of editing the old one.
+  // Items whose quantity drops to 0 are removed from the cart.
+  private changeQuantity(product: Product, change: number): void {
+    this.cartItems.update((items) =>
+      items
+        .map((item) =>
+          item.product.id === product.id ? { ...item, quantity: item.quantity + change } : item,
+        )
+        .filter((item) => item.quantity > 0),
+    );
+  }
+}
+
+function loadCart(): CartItem[] {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
   }
 }

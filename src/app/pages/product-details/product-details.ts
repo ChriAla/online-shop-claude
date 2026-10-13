@@ -1,42 +1,30 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ProductService } from '../../services/product.service';
-import { Product } from '../../models/product';
-import { CartService } from '../../services/cart.service';
+import { Component, computed, inject, input } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
 
 @Component({
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, RouterLink],
   selector: 'app-product-details',
   styleUrl: './product-details.css',
   templateUrl: './product-details.html',
 })
 export class ProductDetails {
-  productId: string | null;
-  product: Product | undefined;
+  // The router fills this from the :id in the URL (see withComponentInputBinding in app.config.ts).
+  readonly id = input.required<string>();
 
-  constructor(
-    private route: ActivatedRoute,
-    private productService: ProductService,
-    private cartService: CartService,
-    private cdr: ChangeDetectorRef,
-  ) {
-    this.productId = this.route.snapshot.paramMap.get('id');
+  private readonly productService = inject(ProductService);
+  private readonly cart = inject(CartService);
 
-    this.productService.getProducts().subscribe((products) => {
-      console.log('Products:', products);
-      console.log('URL ID:', this.productId);
+  protected readonly product = computed(() =>
+    this.productService.getProductById(Number(this.id())),
+  );
 
-      this.product = products.find((product) => product.id === Number(this.productId));
-
-      this.cdr.markForCheck();
-
-      console.log('Found product:', this.product);
-    });
-  }
-  addToCart() {
-    if (this.product) {
-      this.cartService.addToCart(this.product);
+  protected addToCart(): void {
+    const product = this.product();
+    if (product) {
+      this.cart.addToCart(product);
     }
   }
 }

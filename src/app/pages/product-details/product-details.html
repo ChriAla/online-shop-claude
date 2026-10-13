@@ -1,25 +1,21 @@
-@if (product) {
-  <div class="details-container">
-    <img
-      class="details-image"
-      [src]="product.image"
-      [alt]="product.name"
-    />
+<div class="page">
+  <a class="back-link" routerLink="/products">← Back to products</a>
 
-    <div class="details-info">
-      <h1>{{ product.name }}</h1>
+  @if (product(); as product) {
+    <div class="details-container">
+      <img class="details-image" [src]="product.image" [alt]="product.name" />
 
-      <p class="price">
-        {{ product.price | currency: 'EUR' }}
-      </p>
+      <div class="details-info">
+        <h1>{{ product.name }}</h1>
 
-      <p class="description">
-        {{ product.description }}
-      </p>
+        <p class="price">{{ product.price | currency: 'EUR' }}</p>
 
-      <button (click)="addToCart()">
-        Add to Cart
-      </button>
+        <p class="description">{{ product.description }}</p>
+
+        <button (click)="addToCart()">Add to Cart</button>
+      </div>
     </div>
-  </div>
-}
+  } @else {
+    <p class="not-found">Sorry, this product does not exist.</p>
+  }
+</div>

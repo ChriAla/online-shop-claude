@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 
@@ -12,17 +12,11 @@ import { CartService } from '../../services/cart.service';
   templateUrl: './product-card.html',
 })
 export class ProductCard {
-  product = input.required<Product>();
+  readonly product = input.required<Product>();
 
-  @ContentChild('featuredText') featuredText!: ElementRef;
+  private readonly cart = inject(CartService);
 
-  constructor(private cartService: CartService) {}
-
-  addToCart() {
-    this.cartService.addToCart(this.product());
-  }
-
-  showFeaturedText() {
-    console.log(this.featuredText.nativeElement.textContent);
+  protected addToCart(): void {
+    this.cart.addToCart(this.product());
   }
 }

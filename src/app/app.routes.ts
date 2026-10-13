@@ -8,17 +8,26 @@ export const routes: Routes = [
   {
     path: '',
     component: Home,
+    title: 'MyShop',
   },
   {
     path: 'products',
     component: Products,
+    title: 'Products | MyShop',
   },
   {
     path: 'products/:id',
     component: ProductDetails,
+    title: 'Product details | MyShop',
   },
   {
     path: 'cart',
     component: Cart,
+    title: 'Cart | MyShop',
+  },
+  {
+    // Any unknown URL goes back to the home page.
+    path: '**',
+    redirectTo: '',
   },
 ];
