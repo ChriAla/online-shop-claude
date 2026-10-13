@@ -2,7 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Navbar } from './navbar';
 import { CartService } from '../../services/cart.service';
-import { ProductService } from '../../services/product.service';
+import { Product } from '../../models/product';
+
+const laptop: Product = { id: 1, name: 'Laptop', price: 899, image: '', description: '' };
 
 describe('Navbar', () => {
   let fixture: ComponentFixture<Navbar>;
@@ -22,7 +24,6 @@ describe('Navbar', () => {
   it('shows how many items are in the cart', async () => {
     expect(fixture.nativeElement.textContent).toContain('Cart (0)');
 
-    const laptop = TestBed.inject(ProductService).getProductById(1)!;
     const cart = TestBed.inject(CartService);
     cart.addToCart(laptop);
     cart.addToCart(laptop);

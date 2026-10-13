@@ -14,12 +14,14 @@ export class ProductDetails {
   // The router fills this from the :id in the URL (see withComponentInputBinding in app.config.ts).
   readonly id = input.required<string>();
 
-  private readonly productService = inject(ProductService);
+  protected readonly products = inject(ProductService).products;
   private readonly cart = inject(CartService);
 
-  protected readonly product = computed(() =>
-    this.productService.getProductById(Number(this.id())),
-  );
+  protected readonly product = computed(() => {
+    const id = Number(this.id());
+    const products = this.products.hasValue() ? this.products.value() : [];
+    return products.find((product) => product.id === id);
+  });
 
   protected addToCart(): void {
     const product = this.product();

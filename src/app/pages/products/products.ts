@@ -10,13 +10,14 @@ import { ProductCard } from '../../components/product-card/product-card';
   styleUrl: './products.css',
 })
 export class Products {
-  private readonly products = inject(ProductService).getProducts();
+  protected readonly products = inject(ProductService).products;
 
   protected readonly searchText = signal('');
 
-  // Recalculated automatically every time searchText changes.
+  // Recalculated automatically when the products arrive or when searchText changes.
   protected readonly filteredProducts = computed(() => {
     const search = this.searchText().trim().toLowerCase();
-    return this.products.filter((product) => product.name.toLowerCase().includes(search));
+    const products = this.products.hasValue() ? this.products.value() : [];
+    return products.filter((product) => product.name.toLowerCase().includes(search));
   });
 }

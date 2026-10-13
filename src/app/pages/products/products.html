@@ -1,19 +1,28 @@
 <h1>Products</h1>
 
 <div class="products-container">
-  <input
-    class="search"
-    type="search"
-    placeholder="Search products..."
-    aria-label="Search products"
-    [(ngModel)]="searchText"
-  />
+  @if (products.isLoading()) {
+    <p class="status">Loading products...</p>
+  } @else if (products.error()) {
+    <p class="status">
+      Could not load the products.
+      <button (click)="products.reload()">Try again</button>
+    </p>
+  } @else {
+    <input
+      class="search"
+      type="search"
+      placeholder="Search products..."
+      aria-label="Search products"
+      [(ngModel)]="searchText"
+    />
 
-  <div class="products-grid">
-    @for (product of filteredProducts(); track product.id) {
-      <app-product-card [product]="product" />
-    } @empty {
-      <p class="no-results">No products found for "{{ searchText() }}".</p>
-    }
-  </div>
+    <div class="products-grid">
+      @for (product of filteredProducts(); track product.id) {
+        <app-product-card [product]="product" />
+      } @empty {
+        <p class="no-results">No products found for "{{ searchText() }}".</p>
+      }
+    </div>
+  }
 </div>

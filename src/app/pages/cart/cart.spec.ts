@@ -2,7 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Cart } from './cart';
 import { CartService } from '../../services/cart.service';
-import { ProductService } from '../../services/product.service';
+import { Product } from '../../models/product';
+
+const laptop: Product = { id: 1, name: 'Laptop', price: 899, image: '', description: '' };
+const headphones: Product = { id: 3, name: 'Headphones', price: 99, image: '', description: '' };
 
 describe('Cart', () => {
   let fixture: ComponentFixture<Cart>;
@@ -25,11 +28,10 @@ describe('Cart', () => {
   });
 
   it('shows the items and the total', async () => {
-    const products = TestBed.inject(ProductService);
     const cart = TestBed.inject(CartService);
-    cart.addToCart(products.getProductById(1)!); // Laptop, 899
-    cart.addToCart(products.getProductById(1)!);
-    cart.addToCart(products.getProductById(3)!); // Headphones, 99
+    cart.addToCart(laptop);
+    cart.addToCart(laptop);
+    cart.addToCart(headphones);
     await fixture.whenStable();
 
     expect(fixture.nativeElement.querySelectorAll('.cart-item').length).toBe(2);
