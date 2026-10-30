@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class ProductService {
-  // Loads the products from the backend API (which reads them from Azure SQL).
+  // Loads the products from the backend API (API Gateway + Lambda, which reads them from Aurora).
   // The request is made once, the first time a page uses the service, and the result is shared.
   readonly products = httpResource<Product[]>(() => `${environment.apiUrl}/products`, {
     defaultValue: [],
