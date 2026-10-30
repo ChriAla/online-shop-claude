@@ -1,4 +1,4 @@
-// Used by `ng build` (production): the API runs on Azure App Service.
+// Used by `ng build` (production): the API runs on AWS (API Gateway + Lambda).
 export const environment = {
-  apiUrl: 'https://christos-azure-learning-2026-abaug7cje7emhrfb.italynorth-01.azurewebsites.net',
+  apiUrl: 'https://2gb9bhxje5.execute-api.eu-north-1.amazonaws.com',
 };
